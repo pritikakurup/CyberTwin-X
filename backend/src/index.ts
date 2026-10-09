@@ -9,6 +9,7 @@ import simulationRoutes from './routes/simulation';
 import monitorRoutes from './routes/monitor';
 import threatRoutes from './routes/threat';
 import actionRoutes from './routes/action';
+import logsRoutes from './routes/logs';
 import { SimulationEngine } from './simulation';
 import { DetectionEngine } from './detection';
 
@@ -29,12 +30,14 @@ app.use(express.json());
 // Initialize Engines
 export const simulationEngine = new SimulationEngine();
 export const detectionEngine = new DetectionEngine();
+detectionEngine.setIo(io);
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/simulation', simulationRoutes);
 app.use('/api/v1/monitor', monitorRoutes);
 app.use('/api/v1/threats', threatRoutes);
 app.use('/api/v1/actions', actionRoutes);
+app.use('/api/v1/logs', logsRoutes);
 
 app.get('/api/v1/health', (req, res) => {
   res.json({ status: 'ok', service: 'CyberTwin-X Backend' });

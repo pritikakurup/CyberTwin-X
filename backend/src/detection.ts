@@ -1,8 +1,12 @@
 import { getDb } from './db';
-import { io } from './index';
 
 export class DetectionEngine {
   private recentEvents: any[] = [];
+  private ioServer: any = null;
+
+  setIo(ioInstance: any) {
+    this.ioServer = ioInstance;
+  }
   
   async analyze(event: any) {
     this.recentEvents.push(event);
@@ -31,8 +35,20 @@ export class DetectionEngine {
       'INSERT INTO incidents (category, severity, source, rule, evidence, status) VALUES (?, ?, ?, ?, ?, ?)',
       [category, severity, source, rule, evidence, 'OPEN']
     );
-    const incident = await db.get('SELECT * FROM incidents WHERE id = ?', [res.lastID]);
-    io.emit('new_incident', incident);
+    const incidentId = res.lastID;
+    
+    // Propose an action based on severity
+    if (severity === 'CRITICAL' || severity === 'HIGH') {
+      await db.run(
+        'INSERT INTO actions (actionType, target, reason, status, incidentId) VALUES (?, ?, ?, ?, ?)',
+        ['BLOCK_IP', source, `High severity incident detected: ${category}`, 'PENDING', incidentId]
+      );
+    }
+
+    const incident = await db.get('SELECT * FROM incidents WHERE id = ?', [incidentId]);
+    if (this.ioServer) {
+      this.ioServer.emit('new_incident', incident);
+    }
     await db.run('INSERT INTO logs (action, details) VALUES (?, ?)', ['THREAT_DETECTED', `Category: ${category}, Source: ${source}`]);
   }
-}\n
+}

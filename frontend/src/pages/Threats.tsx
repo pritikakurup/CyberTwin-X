@@ -35,4 +35,4 @@ export default function Threats() {
       </div>
     </div>
   );
-}\n
+}

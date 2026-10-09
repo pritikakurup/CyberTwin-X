@@ -47,4 +47,4 @@ export default function Monitoring() {
       </div>
     </div>
   );
-}\n
+}

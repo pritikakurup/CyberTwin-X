@@ -13,4 +13,4 @@ router.post('/stop', async (req, res) => {
 router.get('/status', (req, res) => {
   res.json(simulationEngine.status());
 });
-export default router;\n
+export default router;

@@ -1,51 +1,67 @@
 # CyberTwin-X: Digital Twin for Adaptive Cyber Defense
 
-## Overview
-CyberTwin-X is a digital twin application for cybersecurity that creates an isolated virtual network environment to simulate normal traffic, port scans, and Denial of Service (DoS) attacks. It provides real-time monitoring, rule-based threat detection, and an interface for investigating incidents and deploying simulated defensive responses.
+**Academic Cybersecurity Project — Group 32**
 
-## Implemented Features
-- User Authentication (Registration & Login via backend)
-- Virtual Network Simulation (Normal Traffic, Port Scan, DoS)
-- Real-time Network Monitoring (Socket.IO + SQLite)
-- Rule-based Threat Detection (identifies high-volume requests and port scans)
-- Incident Management (Dashboard & Threat viewing)
-- Application Settings & Health checks
+## Overview
+CyberTwin-X is a full-stack digital twin framework for cybersecurity. It creates an isolated, virtual network environment to simulate normal traffic, port scanning, and Denial of Service (DoS) attacks. It provides real-time traffic monitoring, rule-based threat detection heuristics, defensive response recommendations, response approval workflows, audit logging, and dynamic metrics dashboards.
+
+## Architecture & Features
+- **Authentication**: User registration & login with password hashing (`bcrypt`), JWT token issuance, and route protection.
+- **Traffic Simulation Engine**: Configurable synthetic traffic generator emitting normal and malicious events (`HIGH_VOLUME_REQUEST`, `CONNECTION_ATTEMPT`).
+- **SQLite Data Persistence**: Stores users, events, detected incidents, recommended defensive actions, and audit logs.
+- **Rule-based Detection Engine**: Monitors real-time events to flag Port Scans (>3 unique ports/10s) and DoS attacks (>5 high-volume requests/10s).
+- **Defensive Response Approval**: Generates pending `BLOCK_IP` action proposals upon threat detection, allowing operators to approve/apply responses and update virtual network state.
+- **Audit Logging**: Persists system actions (`USER_REGISTER`, `USER_LOGIN`, `THREAT_DETECTED`, `ACTION_APPROVED`) in SQLite and provides an Audit Logs UI.
+- **Real-Time WebSockets**: Instant event and threat broadcasting via `Socket.IO`.
+- **Overview Dashboard**: Displays backend health and live metrics (total events, incidents, defensive actions).
 
 ## Technology Stack
-- **Frontend**: React, TypeScript, Vite, Tailwind CSS, Recharts, Lucide, Socket.IO Client.
-- **Backend**: Node.js, Express, TypeScript, SQLite, Socket.IO Server.
+- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, Lucide Icons, Socket.IO Client, React Router v6.
+- **Backend**: Node.js, Express, TypeScript, SQLite (`sqlite` / `sqlite3`), Socket.IO, `bcrypt`, `jsonwebtoken`.
+- **Testing**: Jest & Supertest (Backend), Vitest & React Testing Library (Frontend).
 
 ## Prerequisites
-- Node.js (v18 or higher)
-- npm
+- **Node.js**: v18.0.0 or higher
+- **npm**: v9.0.0 or higher
 
-## Setup Instructions
+## Setup & Execution
 
-1. **Install dependencies:**
-   From the root of the project, run:
-   ```bash
-   npm install
-   npm run install:all
-   ```
+### 1. Install Dependencies
+From the project root:
+```bash
+npm run install:all
+```
 
-2. **Database Initialization:**
-   The SQLite database initializes automatically when the backend starts.
+### 2. Run Application (Concurrent Backend & Frontend)
+```bash
+npm run dev
+```
+- Backend runs on: `http://localhost:3000`
+- Frontend runs on: `http://localhost:5173`
 
-3. **Start the Application:**
-   From the root of the project, run:
-   ```bash
-   npm run dev
-   ```
-   This will start both the backend server (port 3000) and the frontend Vite server (usually port 5173).
+### 3. Run Automated Test Suites
+```bash
+# Backend Tests (Jest + Supertest)
+cd backend && npm test
 
-## Usage
-- Open `http://localhost:5173` in your browser.
-- Navigate to the Simulation tab to start generating traffic.
-- Navigate to Monitoring to see real-time events.
-- If a threat is detected, it will be logged.
+# Frontend Tests (Vitest + React Testing Library)
+cd frontend && npm test
+```
 
-## Important Note
-This application operates strictly within an isolated virtual environment. All attacks and defensive actions are synthesized internally and **do not** interact with the host machine's actual networking stack or firewall.
+## Verified Workflow (End-to-End)
+1. **User Authentication**: Register/Login at `/register` or `/login`.
+2. **Simulation**: Navigate to `/simulation`, select "Port Scan" or "DoS", and click "Start Simulation".
+3. **Monitoring**: Navigate to `/monitoring` to view real-time traffic events streamed via Socket.IO.
+4. **Threat Detection**: Heuristics detect anomalous traffic patterns and persist an incident to SQLite.
+5. **Defensive Response**: Navigate to `/responses` to review pending defensive proposals and click "Approve".
+6. **Audit Logging & Dashboard**: Action approval updates the virtual network state, logs an entry in `/logs`, and increments metrics on `/dashboard`.
+
+## Environment & Exclusions
+- Configured in `.env` (derived from `.env.example`).
+- Secrets, `node_modules`, `dist`, `.DS_Store`, and `database.sqlite` are excluded via `.gitignore`.
+
+## Important Safety Note
+All simulations and defensive actions operate strictly within an isolated virtual software environment. CyberTwin-X **does not** perform external network scanning, packet sniffing, or host firewall modifications.
 
 ## GitHub Repository
 URL: https://github.com/pritikakurup/CyberTwin-X

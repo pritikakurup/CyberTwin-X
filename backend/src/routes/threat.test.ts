@@ -17,4 +17,4 @@ describe('Threats API', () => {
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBeTruthy();
   });
-});\n
+});

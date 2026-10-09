@@ -56,4 +56,4 @@ export class SimulationEngine {
   status() {
     return { running: this.running, eventCount: this.eventCount };
   }
-}\n
+}

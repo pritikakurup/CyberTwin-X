@@ -55,4 +55,4 @@ export async function initDb() {
   console.log("Database initialized.");
 }
 
-export function getDb() { return db; }\n
+export function getDb() { return db; }
