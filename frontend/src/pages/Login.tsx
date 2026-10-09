@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Shield } from 'lucide-react';
+import { Shield, Lock, Mail, ArrowRight, AlertCircle } from 'lucide-react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setLoading(true);
     try {
       const res = await fetch('http://localhost:3000/api/v1/auth/login', {
         method: 'POST',
@@ -17,35 +18,91 @@ export default function Login() {
         body: JSON.stringify({ email, password })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      if (!res.ok) throw new Error(data.error || 'Authentication failed');
+      
       localStorage.setItem('token', data.token);
-      navigate('/dashboard');
+      localStorage.setItem('userName', data.name || 'Administrator');
+      window.location.href = '/dashboard';
     } catch (err: any) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-full bg-slate-950 text-slate-100">
-      <div className="w-full max-w-md p-8 bg-slate-900 border border-slate-800 rounded-lg">
-        <div className="flex items-center justify-center space-x-2 mb-6">
-          <Shield className="w-8 h-8 text-cyan-500" />
-          <h2 className="text-2xl font-bold">CyberTwin-X Login</h2>
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Glow Effects */}
+      <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-1/4 right-1/3 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div className="w-full max-w-md glass-panel p-8 rounded-2xl border border-slate-800 shadow-2xl relative z-10 space-y-6">
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <div className="p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-2xl w-fit mx-auto glow-cyan mb-3">
+            <Shield className="w-8 h-8 text-cyan-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-white tracking-tight">CyberTwin-X SOC</h2>
+          <p className="text-xs text-slate-400">Adaptive Cyber Defense Portal Access</p>
         </div>
-        {error && <div className="p-3 mb-4 text-sm text-red-400 bg-red-900/20 border border-red-800 rounded">{error}</div>}
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-400 mb-1">Email</label>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded text-slate-200 focus:outline-none focus:border-cyan-500" />
+
+        {error && (
+          <div className="p-3.5 rounded-xl bg-red-950/60 border border-red-800/80 text-red-300 text-xs font-medium flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+            <span>{error}</span>
           </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-400 mb-1">Password</label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded text-slate-200 focus:outline-none focus:border-cyan-500" />
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+              Email Address
+            </label>
+            <div className="relative">
+              <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="email@cybertwin.local"
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+              />
+            </div>
           </div>
-          <button type="submit" className="w-full py-2 bg-cyan-600 hover:bg-cyan-700 rounded text-white font-medium transition-colors">Login</button>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+              Password
+            </label>
+            <div className="relative">
+              <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)] flex items-center justify-center space-x-2 mt-2"
+          >
+            <span>{loading ? 'Authenticating...' : 'Sign In to Console'}</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
         </form>
-        <div className="mt-4 text-center text-sm text-slate-400">
-          Don't have an account? <Link to="/register" className="text-cyan-500 hover:underline">Register</Link>
+
+        <div className="text-center pt-2 text-xs text-slate-500">
+          Don't have an account?{' '}
+          <a href="/register" className="text-cyan-400 hover:underline font-medium">
+            Register Operator
+          </a>
         </div>
       </div>
     </div>
