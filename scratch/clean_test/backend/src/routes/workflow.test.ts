@@ -17,8 +17,6 @@ app.use('/api/v1/monitor', monitorRoutes);
 app.use('/api/v1/logs', logsRoutes);
 
 describe('CyberTwin-X Full End-to-End Workflow Test', () => {
-  const uniqueEmail = `test_${Date.now()}@cybertwin.local`;
-
   beforeAll(async () => {
     await initDb();
   });
@@ -26,13 +24,13 @@ describe('CyberTwin-X Full End-to-End Workflow Test', () => {
   it('1. User Registration & Login Workflow', async () => {
     const regRes = await request(app)
       .post('/api/v1/auth/register')
-      .send({ name: 'Test User', email: uniqueEmail, password: 'password123' });
+      .send({ name: 'Test User', email: 'test@cybertwin.local', password: 'password123' });
     expect(regRes.status).toBe(200);
     expect(regRes.body.message).toContain('successful');
 
     const loginRes = await request(app)
       .post('/api/v1/auth/login')
-      .send({ email: uniqueEmail, password: 'password123' });
+      .send({ email: 'test@cybertwin.local', password: 'password123' });
     expect(loginRes.status).toBe(200);
     expect(loginRes.body.token).toBeDefined();
     expect(loginRes.body.name).toBe('Test User');
@@ -40,14 +38,13 @@ describe('CyberTwin-X Full End-to-End Workflow Test', () => {
 
   it('2. Synthetic Event -> Detection -> Action Creation -> Approval -> Audit Log Loop', async () => {
     const detector = new DetectionEngine();
-    const attackerIp = `192.168.1.${Math.floor(Math.random() * 200) + 10}`;
 
-    // Simulate high volume requests from attacker IP to trigger DoS rule
+    // Simulate high volume requests from attacker IP 192.168.1.100 to trigger DoS rule
     for (let i = 0; i < 7; i++) {
       await detector.analyze({
         timestamp: new Date().toISOString(),
         eventType: 'HIGH_VOLUME_REQUEST',
-        sourceIp: attackerIp,
+        sourceIp: '192.168.1.100',
         destIp: '10.0.0.1',
         port: 80,
         protocol: 'TCP',
@@ -59,7 +56,7 @@ describe('CyberTwin-X Full End-to-End Workflow Test', () => {
     const incidentsRes = await request(app).get('/api/v1/threats');
     expect(incidentsRes.status).toBe(200);
     expect(incidentsRes.body.length).toBeGreaterThan(0);
-    const dosIncident = incidentsRes.body.find((inc: any) => inc.source === attackerIp);
+    const dosIncident = incidentsRes.body.find((inc: any) => inc.source === '192.168.1.100');
     expect(dosIncident).toBeDefined();
     expect(dosIncident.category).toContain('Denial of Service');
 
@@ -67,7 +64,7 @@ describe('CyberTwin-X Full End-to-End Workflow Test', () => {
     const actionsRes = await request(app).get('/api/v1/actions');
     expect(actionsRes.status).toBe(200);
     expect(actionsRes.body.length).toBeGreaterThan(0);
-    const actionToApprove = actionsRes.body.find((act: any) => act.target === attackerIp);
+    const actionToApprove = actionsRes.body.find((act: any) => act.target === '192.168.1.100');
     expect(actionToApprove).toBeDefined();
     expect(actionToApprove.status).toBe('PENDING');
 

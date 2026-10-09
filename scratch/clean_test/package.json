@@ -1,0 +1,14 @@
+{
+  "name": "cybertwin-x",
+  "version": "1.0.0",
+  "description": "CyberTwin-X: Digital Twin for Adaptive Cyber Defense",
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "dev:backend": "cd backend && npx ts-node src/index.ts",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
