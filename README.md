@@ -189,8 +189,14 @@ Any proposed defensive actions should be understood as application-level demonst
 
 **Group:** 32
 
-Add the final team member names and student identifiers here if required by the submission format.
+| Sr. No. | Team Member Name | PRN |
+|---|---|---|
+| 1 | Gayatri Patil | 23070122096 |
+| 2 | Pritika Kurup | 23070122167 |
+| 3 | Sejal More | 24070122509 |
 
 ---
 
 **End of README**
+
+
