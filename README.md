@@ -48,4 +48,4 @@ CyberTwin-X is a digital twin application for cybersecurity that creates an isol
 This application operates strictly within an isolated virtual environment. All attacks and defensive actions are synthesized internally and **do not** interact with the host machine's actual networking stack or firewall.
 
 ## GitHub Repository
-URL: https://github.com/pritikakurup/CyberTwin-X (Pending publication)
+URL: https://github.com/pritikakurup/CyberTwin-X
