@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 import { 
   Play, 
   Square, 
@@ -22,7 +23,7 @@ export default function Simulation() {
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/v1/simulation/status')
+    fetch(`${API_BASE_URL}/api/v1/simulation/status`)
       .then(res => res.json())
       .then(data => {
         setStatus(data.status);
@@ -34,7 +35,7 @@ export default function Simulation() {
   const handleStart = async () => {
     setMessage(null);
     try {
-      const res = await fetch('http://localhost:3000/api/v1/simulation/start', {
+      const res = await fetch(`${API_BASE_URL}/api/v1/simulation/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ scenario, targetIp, rate: packetRate })
@@ -50,7 +51,7 @@ export default function Simulation() {
   const handleStop = async () => {
     setMessage(null);
     try {
-      await fetch('http://localhost:3000/api/v1/simulation/stop', { method: 'POST' });
+      await fetch(`${API_BASE_URL}/api/v1/simulation/stop`, { method: 'POST' });
       setStatus('STOPPED');
       setMessage('Simulation stopped.');
     } catch (err) {

@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   UserCheck
 } from 'lucide-react';
+import { API_BASE_URL } from './config';
 import Dashboard from './pages/Dashboard';
 import Simulation from './pages/Simulation';
 import Monitoring from './pages/Monitoring';
@@ -42,7 +43,7 @@ function Layout({ children }: { children: React.ReactNode }) {
     if (['/login', '/register'].includes(location.pathname)) return;
     const checkHealth = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/v1/health');
+        const res = await fetch(`${API_BASE_URL}/api/v1/health`);
         if (res.ok) setBackendStatus('connected');
         else setBackendStatus('error');
       } catch {

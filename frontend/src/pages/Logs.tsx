@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../config';
 import { 
   FileText, 
   Search, 
@@ -24,7 +25,7 @@ export default function Logs() {
   const fetchLogs = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:3000/api/v1/logs');
+      const res = await fetch(`${API_BASE_URL}/api/v1/logs`);
       const data = await res.json();
       setLogs(data);
     } catch (err) {

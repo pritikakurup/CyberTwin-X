@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../config';
 import { 
   ShieldCheck, 
   CheckCircle2, 
@@ -30,7 +31,7 @@ export default function Responses() {
   const fetchActions = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:3000/api/v1/actions');
+      const res = await fetch(`${API_BASE_URL}/api/v1/actions`);
       const data = await res.json();
       setActions(data);
     } catch (err) {
@@ -47,7 +48,7 @@ export default function Responses() {
   const handleApprove = async (id: number) => {
     setFeedback(null);
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/actions/${id}/approve`, {
+      const res = await fetch(`${API_BASE_URL}/api/v1/actions/${id}/approve`, {
         method: 'POST'
       });
       if (res.ok) {

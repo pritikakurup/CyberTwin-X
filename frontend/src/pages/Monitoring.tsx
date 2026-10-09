@@ -12,6 +12,7 @@ import {
   X
 } from 'lucide-react';
 import { io } from 'socket.io-client';
+import { API_BASE_URL } from '../config';
 
 interface EventItem {
   id?: number;
@@ -33,13 +34,13 @@ export default function Monitoring() {
 
   useEffect(() => {
     // Initial fetch from backend
-    fetch('http://localhost:3000/api/v1/monitor/events')
+    fetch(`${API_BASE_URL}/api/v1/monitor/events`)
       .then(res => res.json())
       .then(data => setEvents(data))
       .catch(console.error);
 
     // Socket.IO connection
-    const socket = io('http://localhost:3000');
+    const socket = io(API_BASE_URL);
     socket.on('connect', () => setConnected(true));
     socket.on('disconnect', () => setConnected(false));
     socket.on('new_event', (evt: EventItem) => {

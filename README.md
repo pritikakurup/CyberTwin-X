@@ -36,7 +36,7 @@ npm run install:all
 ```bash
 npm run dev
 ```
-- Backend runs on: `http://localhost:3000`
+- Backend runs on: `http://localhost:3001`
 - Frontend runs on: `http://localhost:5173`
 
 ### 3. Run Automated Test Suites

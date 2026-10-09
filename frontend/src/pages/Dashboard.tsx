@@ -26,6 +26,7 @@ import {
   Cell 
 } from 'recharts';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 interface Metrics {
   totalEvents: number;
@@ -43,10 +44,10 @@ export default function Dashboard() {
   const fetchData = async () => {
     try {
       const [hRes, mRes, eRes, iRes] = await Promise.all([
-        fetch('http://localhost:3000/api/v1/health').then(r => r.json()).catch(() => ({ status: 'Offline' })),
-        fetch('http://localhost:3000/api/v1/monitor/metrics').then(r => r.json()).catch(() => ({ totalEvents: 0, totalIncidents: 0, totalActions: 0 })),
-        fetch('http://localhost:3000/api/v1/monitor/events').then(r => r.json()).catch(() => []),
-        fetch('http://localhost:3000/api/v1/threats').then(r => r.json()).catch(() => [])
+        fetch(`${API_BASE_URL}/api/v1/health`).then(r => r.json()).catch(() => ({ status: 'Offline' })),
+        fetch(`${API_BASE_URL}/api/v1/monitor/metrics`).then(r => r.json()).catch(() => ({ totalEvents: 0, totalIncidents: 0, totalActions: 0 })),
+        fetch(`${API_BASE_URL}/api/v1/monitor/events`).then(r => r.json()).catch(() => []),
+        fetch(`${API_BASE_URL}/api/v1/threats`).then(r => r.json()).catch(() => [])
       ]);
 
       setHealth(hRes.status || 'Offline');

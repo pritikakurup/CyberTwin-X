@@ -43,7 +43,7 @@ app.get('/api/v1/health', (req, res) => {
   res.json({ status: 'ok', service: 'CyberTwin-X Backend' });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 initDb().then(() => {
   server.listen(PORT, () => {

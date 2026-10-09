@@ -10,6 +10,7 @@ import {
   Search
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 interface Incident {
   id: number;
@@ -30,7 +31,7 @@ export default function Threats() {
   const fetchThreats = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:3000/api/v1/threats');
+      const res = await fetch(`${API_BASE_URL}/api/v1/threats`);
       const data = await res.json();
       setIncidents(data);
     } catch (err) {
